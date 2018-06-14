@@ -1,17 +1,35 @@
 import unittest
+from unittest import mock
 
-from my_utils.roots import roots
+from my_utils import roots
 
 
 class RootsTest(unittest.TestCase):
-    def test_same_root(self):
-        self.assertEqual(roots(1, -4, 4), (2.0, 2.0))
-
-    def test_different_roots(self):
-        self.assertEqual(roots(1, -3, 2), (1.0, 2.0))
+    def test_correct(self):
+        self.assertEqual(roots.roots(1, -3, 2),
+                         (1.0, 2.0))
 
     def test_negative_a(self):
-        self.assertRaises(ValueError, roots, 0, -3, 2)
+        self.assertRaisesRegex(ValueError, 'a cannot be zero',
+                               roots.roots, 0, -3, 2)
 
     def test_negative_discriminant(self):
-        self.assertRaises(ValueError, roots, 1, 1, 1)
+        self.assertRaisesRegex(ValueError, 'discriminant below zero',
+                               roots.roots, 1, 1, 1)
+
+
+@mock.patch('builtins.print')
+class MainTest(unittest.TestCase):
+
+    @mock.patch('sys.argv', [None, '1', '-3', '2'])
+    def test_correct(self, mock_print):
+        roots.main()
+        mock_print.assert_called_once_with((1.0, 2.0))
+
+    @mock.patch('sys.exit')
+    @mock.patch('sys.argv', [None, '1', '-3'])
+    def test_missing_argument(self, mock_exit, mock_print):
+        mock_exit.side_effect = RuntimeError
+        self.assertRaises(RuntimeError, roots.main)
+        mock_exit.assert_called_once_with('3 arguments required')
+        mock_print.assert_not_called()
