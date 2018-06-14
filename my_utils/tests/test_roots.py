@@ -18,7 +18,7 @@ class RootsTest(unittest.TestCase):
                                roots.roots, 1, 1, 1)
 
 
-@mock.patch('builtins.print')
+@mock.patch('builtins.print', autospec=True)
 class MainTest(unittest.TestCase):
 
     @mock.patch('sys.argv', [None, '1', '-3', '2'])
@@ -26,7 +26,7 @@ class MainTest(unittest.TestCase):
         roots.main()
         mock_print.assert_called_once_with((1.0, 2.0))
 
-    @mock.patch('sys.exit')
+    @mock.patch('sys.exit', autospec=True)
     @mock.patch('sys.argv', [None, '1', '-3'])
     def test_missing_argument(self, mock_exit, mock_print):
         mock_exit.side_effect = RuntimeError
