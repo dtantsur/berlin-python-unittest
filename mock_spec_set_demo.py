@@ -6,7 +6,7 @@ class A:
         return n ** 2
 
 
-m = mock.Mock(spec=A)
+m = mock.Mock(spec_set=A)
 print(m.x)
 m.y = 42
 print(m.y)
